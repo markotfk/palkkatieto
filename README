@@ -1,0 +1,21 @@
+Palkkatieto sovellus
+Copyright Marko Karjalainen, 2022
+
+Anonyymin palkkatiedon kirjaus ja raportointi.
+
+Toteutustekniikka 
+
+Backend:
+ASP.NET 6, SQL palvelin (Postgresql).
+
+Frontend:
+Bootstrap, JQuery
+
+
+
+
+
+
+
+
+
