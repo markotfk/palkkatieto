@@ -1,7 +1,4 @@
 namespace palkkatietoapi;
-
-using palkkatietoapi.Db;
-
 public class Startup
 {
     public Startup(IConfiguration configuration)
@@ -16,8 +13,6 @@ public class Startup
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-
-        services.AddDbContext<PalkkaDbContext>();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
