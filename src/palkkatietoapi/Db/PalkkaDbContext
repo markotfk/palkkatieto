@@ -1,0 +1,16 @@
+namespace palkkatietoapi.Db
+{
+    using Microsoft.EntityFrameworkCore;
+    using palkkatietoapi.Model;
+
+    public partial class PalkkaDbContext : DbContext
+    {
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Palkka> Palkat { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder.LogTo(l => Console.WriteLine(l));
+    }
+}
+
