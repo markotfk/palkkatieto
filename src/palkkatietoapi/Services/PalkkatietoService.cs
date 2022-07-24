@@ -4,27 +4,28 @@ using palkkatietoapi.Db;
 
 public class PalkkatietoService : IPalkkatietoService
 {
-    readonly PalkkaDbContext palkkaDbContext;
+    readonly IConfiguration configuration;
 
-    public PalkkatietoService(PalkkaDbContext context) 
-    {
-        palkkaDbContext = context;
+    public PalkkatietoService(IConfiguration configuration) {
+        this.configuration = configuration;
     }
-
     public async Task Add(Palkka palkka, CancellationToken cancellationToken)
     {
+        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         await palkkaDbContext.AddAsync(palkka, cancellationToken);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
     }
 
     public Palkka GetById(long id)
     {
-        var ret = palkkaDbContext.Palkat.Where(p => p.Id == id).SingleOrDefault();
+        using var palkkaDbContext = new PalkkaDbContext(configuration);
+        var ret = palkkaDbContext.Palkat.AsNoTracking().Where(p => p.Id == id).SingleOrDefault();
         return ret;
     }
 
     public async Task<IList<Palkka>> GetByQuery(PalkkaQuery query, CancellationToken cancellationToken)
     {
+        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var palkatQuery = palkkaDbContext.Palkat.AsNoTracking().AsQueryable();
         if (query.UserId != null) {
             palkatQuery = palkatQuery.Where(p => p.User.Id == query.UserId);
@@ -41,12 +42,19 @@ public class PalkkatietoService : IPalkkatietoService
         if (!string.IsNullOrWhiteSpace(query.CountryCode)) {
             palkatQuery = palkatQuery.Where(p => p.CountryCode == query.CountryCode);
         }
+        if (!string.IsNullOrWhiteSpace(query.JobRole)) {
+            palkatQuery = palkatQuery.Where(p => p.JobRole == query.JobRole);
+        }
+        if (!string.IsNullOrWhiteSpace(query.City)) {
+            palkatQuery = palkatQuery.Where(p => p.City == query.City);
+        }
         return await palkatQuery.ToListAsync(cancellationToken);
 
     }
 
     public async Task Remove(long palkkaId, CancellationToken cancellationToken)
     {
+        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var entity = await palkkaDbContext.FindAsync<Palkka>(palkkaId, cancellationToken);
         if (entity == null) throw new Exception($"{palkkaId} not found in palkka db for removal.");
         palkkaDbContext.Remove(entity);

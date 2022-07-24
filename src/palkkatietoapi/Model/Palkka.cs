@@ -11,7 +11,9 @@ public class Palkka {
 
     public string JobRole { get; set; }
 
-    public string CountryCode {get; set;} = "FI";
+    public string City { get; set; }
+
+    public string CountryCode {get; set;} = "fi";
 
     public DateTime DateReported { get; set;}
 
