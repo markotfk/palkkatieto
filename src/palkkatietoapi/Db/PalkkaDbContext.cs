@@ -2,19 +2,18 @@ namespace palkkatietoapi.Db;
 using Microsoft.EntityFrameworkCore;
 using palkkatietoapi.Model;
 
-public class PalkkaDbContext : DbContext
+public partial class PalkkaDbContext : DbContext
 {
-    readonly IConfiguration configuration;
+    readonly string connectionString;
     public PalkkaDbContext(IConfiguration configuration) 
     {
-        this.configuration = configuration;
+        this.connectionString = configuration.GetConnectionString("PalkkaDb");
     }
 
     public DbSet<User>? Users { get; set; }
     public DbSet<Palkka>? Palkat { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
     {
-        var connectionString = configuration.GetConnectionString("PalkkaDb");
         optionsBuilder.UseNpgsql(connectionString);
     }       
 }

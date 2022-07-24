@@ -13,6 +13,7 @@ public class Startup
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddDbContext<palkkatietoapi.Db.PalkkaDbContext>();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)

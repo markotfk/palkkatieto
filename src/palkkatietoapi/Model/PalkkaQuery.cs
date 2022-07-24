@@ -1,5 +1,7 @@
 namespace palkkatietoapi.Model;
 public class PalkkaQuery {
+
+    public long? UserId { get; set; }
     public int? AmountMin { get; set; }
     public int? AmountMax { get; set; }
 

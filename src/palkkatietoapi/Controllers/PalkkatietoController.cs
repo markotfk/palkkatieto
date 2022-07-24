@@ -7,17 +7,41 @@ namespace palkkatietoapi.Controllers;
 [Route("[controller]")]
 public class PalkkatietoController : ControllerBase
 {
-    
-    private readonly ILogger<PalkkatietoController> _logger;
+    readonly IPalkkatietoService palkkatietoService;
+    private readonly ILogger<PalkkatietoController> logger;
 
-    public PalkkatietoController(ILogger<PalkkatietoController> logger)
+    public PalkkatietoController(ILogger<PalkkatietoController> logger, IPalkkatietoService palkkatietoService)
     {
-        _logger = logger;
+        this.logger = logger;
+        this.palkkatietoService = palkkatietoService;
+    }
+
+    [HttpPost]
+    [Route("getByQuery")]
+    public async Task<IActionResult> GetByQuery([FromBody] PalkkaQuery query, CancellationToken cancellationToken)
+    {
+        return new JsonResult(await palkkatietoService.GetByQuery(query, cancellationToken));
     }
 
     [HttpGet]
-    public IEnumerable<Palkka> Get([FromBody] PalkkaQuery query)
+    [Route("getById/{id:long}")]
+    public IActionResult GetById(long id)
     {
-        return new List<Palkka>();
+        return new JsonResult(palkkatietoService.GetById(id));
+    }
+
+    [HttpPost]
+    [Route("add")]
+    public async Task AddPalkka(Palkka palkka, CancellationToken cancellationToken) 
+    {
+        await palkkatietoService.Add(palkka, cancellationToken);
+
+    }
+
+    [HttpDelete]
+    [Route("remove")]
+    public async Task RemovePalkka(long palkkaId, CancellationToken cancellationToken) 
+    {
+        await palkkatietoService.Remove(palkkaId, cancellationToken);
     }
 }
