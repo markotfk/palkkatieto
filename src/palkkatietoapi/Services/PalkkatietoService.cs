@@ -6,9 +6,11 @@ public class PalkkatietoService : IPalkkatietoService
 {
     readonly IConfiguration configuration;
 
-    public PalkkatietoService(IConfiguration configuration) {
+    public PalkkatietoService(IConfiguration configuration) 
+    {
         this.configuration = configuration;
     }
+
     public async Task Add(Palkka palkka, CancellationToken cancellationToken)
     {
         await using var palkkaDbContext = new PalkkaDbContext(configuration);
@@ -16,10 +18,10 @@ public class PalkkatietoService : IPalkkatietoService
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public Palkka GetById(long id)
+    public async Task<Palkka?> GetById(long id, CancellationToken cancellationToken)
     {
-        using var palkkaDbContext = new PalkkaDbContext(configuration);
-        var ret = palkkaDbContext.Palkat.AsNoTracking().Where(p => p.Id == id).SingleOrDefault();
+        await using var palkkaDbContext = new PalkkaDbContext(configuration);
+        var ret = await palkkaDbContext.Palkat.FindAsync(id, cancellationToken);
         return ret;
     }
 
@@ -52,12 +54,33 @@ public class PalkkatietoService : IPalkkatietoService
 
     }
 
-    public async Task Remove(long palkkaId, CancellationToken cancellationToken)
+    public async Task Remove(long id, CancellationToken cancellationToken)
     {
         await using var palkkaDbContext = new PalkkaDbContext(configuration);
-        var entity = await palkkaDbContext.FindAsync<Palkka>(palkkaId, cancellationToken);
-        if (entity == null) throw new Exception($"{palkkaId} not found in palkka db for removal.");
+        var entity = await GetById(id, cancellationToken);
+        if (entity == null) throw new Exception($"{id} not found in palkka db for removal.");
         palkkaDbContext.Remove(entity);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task Update(Palkka palkka, CancellationToken cancellationToken) 
+    {
+        await using var palkkaDbContext = new PalkkaDbContext(configuration);
+        var dbEntity = await GetById(palkka.Id, cancellationToken);
+        if (dbEntity == null) {
+            throw new Exception($"Update: entity {palkka.Id} not found");
+        }
+        MapData(palkka, dbEntity);
+        await palkkaDbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private void MapData(Palkka from, Palkka to) 
+    {
+        to.Amount = from.Amount;
+        to.City = from.City;
+        to.Company = from.Company;
+        to.CountryCode = from.CountryCode;
+        to.JobRole = from.JobRole;
+
     }
 }

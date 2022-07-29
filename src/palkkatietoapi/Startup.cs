@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace palkkatietoapi;
 public class Startup
 {
@@ -13,7 +15,9 @@ public class Startup
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddDbContext<palkkatietoapi.Db.PalkkaDbContext>();
+        services.AddDbContext<palkkatietoapi.Db.PalkkaDbContext>(options => {
+            options.UseNpgsql(Configuration.GetConnectionString("PalkkaDb"));
+        });
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)

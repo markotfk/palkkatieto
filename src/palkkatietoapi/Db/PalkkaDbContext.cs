@@ -1,6 +1,7 @@
-namespace palkkatietoapi.Db;
 using Microsoft.EntityFrameworkCore;
 using palkkatietoapi.Model;
+
+namespace palkkatietoapi.Db;
 
 public partial class PalkkaDbContext : DbContext
 {

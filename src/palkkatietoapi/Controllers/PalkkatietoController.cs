@@ -25,9 +25,9 @@ public class PalkkatietoController : ControllerBase
 
     [HttpGet]
     [Route("getById/{id:long}")]
-    public IActionResult GetById(long id)
+    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {
-        return new JsonResult(palkkatietoService.GetById(id));
+        return new JsonResult(await palkkatietoService.GetById(id, cancellationToken));
     }
 
     [HttpPost]
@@ -43,5 +43,12 @@ public class PalkkatietoController : ControllerBase
     public async Task RemovePalkka(long palkkaId, CancellationToken cancellationToken) 
     {
         await palkkatietoService.Remove(palkkaId, cancellationToken);
+    }
+
+    [HttpPut]
+    [Route("update")]
+    public async Task Update(Palkka palkka, CancellationToken cancellationToken)
+    {
+        await palkkatietoService.Update(palkka, cancellationToken);
     }
 }
