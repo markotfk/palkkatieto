@@ -12,6 +12,18 @@ Frontend:
 Bootstrap, JQuery
 
 
+User secrets
+************
+Add user secret file to the project containing the database connection string for development, for example:
+
+{
+    "ConnectionStrings": {
+        "PalkkaDb": "Host=localhost:5432;Username=username;Password=saltypassword;Database=palkkatieto"
+    }
+
+    
+}
+
 
 
 
