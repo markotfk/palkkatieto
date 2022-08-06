@@ -16,15 +16,24 @@ public class PalkkatietoControllerTests {
     private PalkkaDbContext db;
 
     [SetUp]
-    public void Setup() {
+    public async Task Setup() {
         var mockLogger = Substitute.For<ILogger<PalkkatietoController>>();
         db = UnitTestPalkkaDbContextCreator.Instance();
-        db.Database.Migrate();
+        await db.Database.MigrateAsync();
+
+        await db.Database.ExecuteSqlRawAsync("DELETE FROM \"Palkat\"");
+        await db.Database.ExecuteSqlRawAsync("DELETE FROM \"Users\"");
         
-        db.Users.Add(GetUser());
-        db.SaveChanges();
+        await db.Users.AddAsync(GetUser());
+        await db.SaveChangesAsync();
         var unitTestPalkkaService = new PalkkatietoService(db);
         instance = new PalkkatietoController(mockLogger, unitTestPalkkaService);
+    }
+
+    [TearDown]
+    public void Teardown() 
+    {
+        db?.Dispose();
     }
 
     [Test]
