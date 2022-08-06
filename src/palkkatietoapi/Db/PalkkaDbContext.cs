@@ -3,19 +3,13 @@ using palkkatietoapi.Model;
 
 namespace palkkatietoapi.Db;
 
-public partial class PalkkaDbContext : DbContext
+public class PalkkaDbContext : DbContext
 {
-    readonly string connectionString;
-    public PalkkaDbContext(IConfiguration configuration) 
-    {
-        this.connectionString = configuration.GetConnectionString("PalkkaDb");
+    public PalkkaDbContext(DbContextOptions<PalkkaDbContext> options) : base(options) 
+    {        
     }
-
+    
     public DbSet<User>? Users { get; set; }
     public DbSet<Palkka>? Palkat { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
-    {
-        optionsBuilder.UseNpgsql(connectionString);
-    }       
 }
 

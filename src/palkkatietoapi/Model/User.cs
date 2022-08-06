@@ -1,6 +1,10 @@
 namespace palkkatietoapi.Model;
 
 public class User {
+    public User() {
+        Created = DateTime.UtcNow;
+    }
+    
     public long Id { get; set; }
     public string Name { get; set;}
     public string Login { get; set; }

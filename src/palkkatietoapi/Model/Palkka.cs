@@ -1,6 +1,11 @@
 namespace palkkatietoapi.Model;
 
 public class Palkka {
+
+    public Palkka() {
+        Created = DateTime.UtcNow;
+    }
+
     public long Id { get; set; }
 
     public User User { get; set; }
@@ -17,7 +22,7 @@ public class Palkka {
 
     public DateTime DateReported { get; set;}
 
-    public DateTime? Created  {get; set; }
+    public DateTime Created  {get; set; }
 
 }
 

@@ -4,31 +4,28 @@ using palkkatietoapi.Db;
 
 public class PalkkatietoService : IPalkkatietoService
 {
-    readonly IConfiguration configuration;
+    readonly PalkkaDbContext palkkaDbContext;
 
-    public PalkkatietoService(IConfiguration configuration) 
+    public PalkkatietoService(PalkkaDbContext context) 
     {
-        this.configuration = configuration;
+        this.palkkaDbContext = context;
     }
 
     public async Task Add(Palkka palkka, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         await palkkaDbContext.AddAsync(palkka, cancellationToken);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Palkka?> GetById(long id, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var ret = await palkkaDbContext.Palkat.FindAsync(id, cancellationToken);
         return ret;
     }
 
     public async Task<IList<Palkka>> GetByQuery(PalkkaQuery query, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
-        var palkatQuery = palkkaDbContext.Palkat.AsNoTracking().AsQueryable();
+        var palkatQuery = palkkaDbContext.Palkat.AsNoTracking();
         if (query.UserId != null) {
             palkatQuery = palkatQuery.Where(p => p.User.Id == query.UserId);
         }
@@ -56,7 +53,6 @@ public class PalkkatietoService : IPalkkatietoService
 
     public async Task Remove(long id, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var entity = await GetById(id, cancellationToken);
         if (entity == null) throw new Exception($"{id} not found in palkka db for removal.");
         palkkaDbContext.Remove(entity);
@@ -65,7 +61,6 @@ public class PalkkatietoService : IPalkkatietoService
 
     public async Task Update(Palkka palkka, CancellationToken cancellationToken) 
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var dbEntity = await GetById(palkka.Id, cancellationToken);
         if (dbEntity == null) {
             throw new Exception($"Update: entity {palkka.Id} not found");

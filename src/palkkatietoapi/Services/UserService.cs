@@ -7,36 +7,30 @@ namespace palkkatietoapi.Services;
 public class UserService : IUserService
 {
     readonly ILogger<UserService> logger;
-    readonly IConfiguration configuration;
 
-    public UserService(ILogger<UserService> logger, IConfiguration configuration) 
+    readonly PalkkaDbContext palkkaDbContext;
+
+    public UserService(ILogger<UserService> logger, PalkkaDbContext palkkaDbContext) 
     {
         this.logger = logger;
-        this.configuration = configuration;
+        this.palkkaDbContext = palkkaDbContext;
     }
 
     public async Task Add(User user, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         palkkaDbContext.Add(user);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<User?> GetById(long id, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var entity = await palkkaDbContext.FindAsync<User>(id);
-        if (entity == null) {
-            logger.LogError("GetById: Cannot find user {Id}", id);
-            throw new Exception($"Cannot find user {id}.");
-        } 
         return entity;
         
     }
 
     public async Task Remove(long id, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var entity = await GetById(id, cancellationToken);
         if (entity == null) {
             logger.LogError("GetById: Cannot find user {Id}", id);
@@ -48,7 +42,6 @@ public class UserService : IUserService
 
     public async Task Update(User user, CancellationToken cancellationToken)
     {
-        await using var palkkaDbContext = new PalkkaDbContext(configuration);
         var dbEntity = await GetById(user.Id, cancellationToken);
         if (dbEntity == null) {
             logger.LogError("GetById: Cannot find user {Id}", user.Id);

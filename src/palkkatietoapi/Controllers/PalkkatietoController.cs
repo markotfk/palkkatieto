@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using palkkatietoapi.Model;
 
 namespace palkkatietoapi.Controllers;
@@ -20,35 +21,44 @@ public class PalkkatietoController : ControllerBase
     [Route("getByQuery")]
     public async Task<IActionResult> GetByQuery([FromBody] PalkkaQuery query, CancellationToken cancellationToken)
     {
-        return new JsonResult(await palkkatietoService.GetByQuery(query, cancellationToken));
+        var result = new JsonResult(await palkkatietoService.GetByQuery(query, cancellationToken));
+        result.StatusCode = (int)HttpStatusCode.OK;
+        return result;
+
     }
 
     [HttpGet]
     [Route("getById/{id:long}")]
     public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {
-        return new JsonResult(await palkkatietoService.GetById(id, cancellationToken));
+        var ret = await palkkatietoService.GetById(id, cancellationToken);
+        if (ret == null) return NotFound();
+        var result = new JsonResult(ret);
+        result.StatusCode = (int)HttpStatusCode.OK;
+        return result;
     }
 
     [HttpPost]
     [Route("add")]
-    public async Task AddPalkka(Palkka palkka, CancellationToken cancellationToken) 
+    public async Task<IActionResult> AddPalkka(Palkka palkka, CancellationToken cancellationToken) 
     {
         await palkkatietoService.Add(palkka, cancellationToken);
-
+        return Ok();
     }
 
     [HttpDelete]
-    [Route("remove")]
-    public async Task RemovePalkka(long palkkaId, CancellationToken cancellationToken) 
+    [Route("remove/{id:long}")]
+    public async Task<IActionResult> RemovePalkka(long id, CancellationToken cancellationToken) 
     {
-        await palkkatietoService.Remove(palkkaId, cancellationToken);
+        await palkkatietoService.Remove(id, cancellationToken);
+        return Ok();
     }
 
     [HttpPut]
     [Route("update")]
-    public async Task Update(Palkka palkka, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Palkka palkka, CancellationToken cancellationToken)
     {
         await palkkatietoService.Update(palkka, cancellationToken);
+        return Ok();
     }
 }
