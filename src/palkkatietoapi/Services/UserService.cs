@@ -56,5 +56,6 @@ public class UserService : IUserService
         to.LastLogin = from.LastLogin;
         to.Login = from.Login;
         to.Name = from.Name;
+        to.Modified = DateTime.UtcNow;
     }
 }

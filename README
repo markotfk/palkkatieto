@@ -25,6 +25,20 @@ Add user secret file to the project containing the database connection string fo
 }
 
 
+Migrations
+**********
+https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli
+
+To create migrations you need to install dotnet Entity Framework Core tool.
+>dotnet tool install --global dotnet-ef
+
+
+Add migration
+>dotnet ef migrations add MyChange -- ConnectionString "Host=<host:port>;Username=<username>;Password=<password>;Database<databasename>"
+
+Update database
+>dotnet ef database update -- ConnectionString "Host=<host:port>;Username=<username>;Password=<password>;Database<databasename>"
+
 
 
 

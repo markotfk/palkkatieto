@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using palkkatietoapi.Model;
 using palkkatietoapi.Db;
@@ -11,15 +12,17 @@ public class PalkkatietoService : IPalkkatietoService
         this.palkkaDbContext = context;
     }
 
-    public async Task Add(Palkka palkka, CancellationToken cancellationToken)
+    public async Task<Palkka> Add(Palkka palkka, CancellationToken cancellationToken)
     {
         await palkkaDbContext.AddAsync(palkka, cancellationToken);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        Debug.Assert(palkka.Id != 0);
+        return palkka;
     }
 
-    public async Task<Palkka?> GetById(long id, CancellationToken cancellationToken)
+    public async Task<Palkka?> GetById(long id)
     {
-        var ret = await palkkaDbContext.Palkat.FindAsync(id, cancellationToken);
+        var ret = await palkkaDbContext.Palkat.FindAsync(id);
         return ret;
     }
 
@@ -53,20 +56,21 @@ public class PalkkatietoService : IPalkkatietoService
 
     public async Task Remove(long id, CancellationToken cancellationToken)
     {
-        var entity = await GetById(id, cancellationToken);
+        var entity = await GetById(id);
         if (entity == null) throw new Exception($"{id} not found in palkka db for removal.");
         palkkaDbContext.Remove(entity);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Update(Palkka palkka, CancellationToken cancellationToken) 
+    public async Task<Palkka> Update(Palkka palkka, CancellationToken cancellationToken) 
     {
-        var dbEntity = await GetById(palkka.Id, cancellationToken);
+        var dbEntity = await GetById(palkka.Id);
         if (dbEntity == null) {
             throw new Exception($"Update: entity {palkka.Id} not found");
         }
         MapData(palkka, dbEntity);
         await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        return dbEntity;
     }
 
     private void MapData(Palkka from, Palkka to) 
@@ -76,6 +80,6 @@ public class PalkkatietoService : IPalkkatietoService
         to.Company = from.Company;
         to.CountryCode = from.CountryCode;
         to.JobRole = from.JobRole;
-
+        to.Modified = DateTime.UtcNow;
     }
 }

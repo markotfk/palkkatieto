@@ -10,4 +10,5 @@ public class User {
     public string Login { get; set; }
     public DateTime Created { get; set; }
     public DateTime? LastLogin { get; set; }
+    public DateTime? Modified { get; set; }
 }

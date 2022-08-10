@@ -19,7 +19,8 @@ namespace palkkatietoapi.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Login = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,7 +40,8 @@ namespace palkkatietoapi.Migrations
                     City = table.Column<string>(type: "text", nullable: false),
                     CountryCode = table.Column<string>(type: "text", nullable: false),
                     DateReported = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -45,7 +45,7 @@ namespace palkkatietoapi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("Created")
+                    b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateReported")
@@ -54,6 +54,9 @@ namespace palkkatietoapi.Migrations
                     b.Property<string>("JobRole")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -82,6 +85,9 @@ namespace palkkatietoapi.Migrations
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()

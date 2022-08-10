@@ -21,29 +21,26 @@ public class PalkkatietoController : ControllerBase
     [Route("getByQuery")]
     public async Task<IActionResult> GetByQuery([FromBody] PalkkaQuery query, CancellationToken cancellationToken)
     {
-        var result = new JsonResult(await palkkatietoService.GetByQuery(query, cancellationToken));
-        result.StatusCode = (int)HttpStatusCode.OK;
+        var result = new OkObjectResult(await palkkatietoService.GetByQuery(query, cancellationToken));
         return result;
 
     }
 
     [HttpGet]
     [Route("getById/{id:long}")]
-    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(long id)
     {
-        var ret = await palkkatietoService.GetById(id, cancellationToken);
+        var ret = await palkkatietoService.GetById(id);
         if (ret == null) return NotFound();
-        var result = new JsonResult(ret);
-        result.StatusCode = (int)HttpStatusCode.OK;
-        return result;
+        return Ok(ret);
     }
 
     [HttpPost]
     [Route("add")]
     public async Task<IActionResult> AddPalkka(Palkka palkka, CancellationToken cancellationToken) 
     {
-        await palkkatietoService.Add(palkka, cancellationToken);
-        return Ok();
+        var ret = await palkkatietoService.Add(palkka, cancellationToken);
+        return Ok(ret);
     }
 
     [HttpDelete]
@@ -58,7 +55,7 @@ public class PalkkatietoController : ControllerBase
     [Route("update")]
     public async Task<IActionResult> Update(Palkka palkka, CancellationToken cancellationToken)
     {
-        await palkkatietoService.Update(palkka, cancellationToken);
-        return Ok();
+        var ret = await palkkatietoService.Update(palkka, cancellationToken);
+        return Ok(ret);
     }
 }

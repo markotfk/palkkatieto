@@ -12,7 +12,7 @@ using palkkatietoapi.Db;
 namespace palkkatietoapi.Migrations
 {
     [DbContext(typeof(PalkkaDbContext))]
-    [Migration("20220729165833_InitialCreate")]
+    [Migration("20220810194940_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,7 @@ namespace palkkatietoapi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("Created")
+                    b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateReported")
@@ -56,6 +56,9 @@ namespace palkkatietoapi.Migrations
                     b.Property<string>("JobRole")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -84,6 +87,9 @@ namespace palkkatietoapi.Migrations
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
