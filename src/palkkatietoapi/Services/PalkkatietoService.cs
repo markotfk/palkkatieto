@@ -50,6 +50,24 @@ public class PalkkatietoService : IPalkkatietoService
         if (!string.IsNullOrWhiteSpace(query.City)) {
             palkatQuery = palkatQuery.Where(p => p.City == query.City);
         }
+        if (!string.IsNullOrWhiteSpace(query.OrderBy)) {
+            if (query.OrderBy == nameof(Palkka.Amount)) {
+                palkatQuery = query.OrderByDescending ? 
+                    palkatQuery.OrderByDescending(p => p.Amount): palkatQuery.OrderBy(p => p.Amount);
+            } else if (query.OrderBy == nameof(Palkka.City)) {
+                palkatQuery = query.OrderByDescending ? 
+                    palkatQuery.OrderByDescending(p => p.City): palkatQuery.OrderBy(p => p.City);
+            } else if (query.OrderBy == nameof(Palkka.Company)) {
+                palkatQuery = query.OrderByDescending ? 
+                    palkatQuery.OrderByDescending(p => p.Company): palkatQuery.OrderBy(p => p.Company);
+            } else if (query.OrderBy == nameof(Palkka.CountryCode)) {
+                palkatQuery = query.OrderByDescending ? 
+                    palkatQuery.OrderByDescending(p => p.CountryCode): palkatQuery.OrderBy(p => p.CountryCode);
+            } else if (query.OrderBy == nameof(Palkka.JobRole)) {
+                palkatQuery = query.OrderByDescending ? 
+                    palkatQuery.OrderByDescending(p => p.JobRole): palkatQuery.OrderBy(p => p.JobRole);
+            }
+        }
         return await palkatQuery.ToListAsync(cancellationToken);
 
     }

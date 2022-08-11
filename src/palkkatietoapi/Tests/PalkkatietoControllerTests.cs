@@ -107,6 +107,78 @@ public class PalkkatietoControllerTests {
         Assert.AreEqual("Oura", resultValue[0].Company);
     }
 
+    [Test]
+    public async Task GetByQueryTest() 
+    {
+        var palkka = GetPalkka(3020, "Muhos", "IBM");
+        await instance.AddPalkka(palkka, CancellationToken.None);
+        var palkka2 = GetPalkka(5000, "Rovaniemi", "Joulupukin paja");
+        await instance.AddPalkka(palkka2, CancellationToken.None);
+        var palkka3 = GetPalkka(9000, "Lahti", "Scandic");
+        await instance.AddPalkka(palkka3, CancellationToken.None);
+        
+        // No query parameters, should return all items in random order
+        var palkkaQuery = new PalkkaQuery();
+        var t = await instance.GetByQuery(palkkaQuery, CancellationToken.None);
+        var result = t as OkObjectResult;
+        Assert.NotNull(result);
+
+        var resultValue = (List<Palkka>)result.Value;
+        Assert.AreEqual(3, resultValue.Count);
+    }
+
+    [Test]
+    public async Task GetByQueryOrderByTest() 
+    {
+        var palkka = GetPalkka(6020, "Birginham", "Server Inc.");
+        await instance.AddPalkka(palkka, CancellationToken.None);
+        var palkka2 = GetPalkka(5000, "Auckland", "Google");
+        await instance.AddPalkka(palkka2, CancellationToken.None);
+        var palkka3 = GetPalkka(2000, "Copenhagen", "R-collection");
+        await instance.AddPalkka(palkka3, CancellationToken.None);
+        
+        // Order results by city
+        var palkkaQuery = new PalkkaQuery {
+            OrderBy = nameof(Palkka.City)
+        };
+        var t = await instance.GetByQuery(palkkaQuery, CancellationToken.None);
+        var result = t as OkObjectResult;
+        Assert.NotNull(result);
+
+        var resultValue = (List<Palkka>)result.Value;
+        Assert.AreEqual(3, resultValue.Count);
+        // First item should be Auckland
+        Assert.AreEqual("Auckland", resultValue[0].City);
+        Assert.AreEqual(5000, resultValue[0].Amount);
+        Assert.AreEqual("Google", resultValue[0].Company);
+    }
+
+    [Test]
+    public async Task GetByQueryOrderByDescendingTest() 
+    {
+        var palkka = GetPalkka(6020, "Birginham", "Server Inc.");
+        await instance.AddPalkka(palkka, CancellationToken.None);
+        var palkka2 = GetPalkka(5000, "Auckland", "Google");
+        await instance.AddPalkka(palkka2, CancellationToken.None);
+        var palkka3 = GetPalkka(2000, "Copenhagen", "R-collection");
+        await instance.AddPalkka(palkka3, CancellationToken.None);
+
+        // Test descending ordering
+        var palkkaQuery = new PalkkaQuery {
+            OrderBy = nameof(Palkka.City)
+        };
+        palkkaQuery.OrderByDescending = true;
+        var orderByDescResult = await instance.GetByQuery(palkkaQuery, CancellationToken.None) as OkObjectResult;
+        Assert.NotNull(orderByDescResult);
+        
+        var resultValue = (List<Palkka>)orderByDescResult.Value;
+        Assert.AreEqual(3, resultValue.Count);
+        // Descending order should return Copenhagen first
+        Assert.AreEqual("Copenhagen", resultValue[0].City);
+        Assert.AreEqual(2000, resultValue[0].Amount);
+        Assert.AreEqual("R-collection", resultValue[0].Company);
+    }
+
     private User GetUser() {
         var user = new User();
         user.Login = "unit_test_login";
