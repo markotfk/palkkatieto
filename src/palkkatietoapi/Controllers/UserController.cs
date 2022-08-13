@@ -24,17 +24,15 @@ public class UsersController : ControllerBase
     {
         var ret = await userService.GetById(id, cancellationToken);
         if (ret == null) return NotFound();
-        var result = new JsonResult(ret);
-        result.StatusCode = (int)HttpStatusCode.OK;
-        return result;
+        return Ok(ret);
     }
 
     [HttpPost]
     [Route("add")]
     public async Task<IActionResult> Add(User user, CancellationToken cancellationToken) 
     {
-        await userService.Add(user, cancellationToken);
-        return Ok();
+        var ret = await userService.Add(user, cancellationToken);
+        return Ok(ret);
     }
 
     [HttpDelete]

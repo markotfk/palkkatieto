@@ -1,34 +1,32 @@
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using palkkatietoapi.Model;
 using palkkatietoapi.Db;
 
 public class PalkkatietoService : IPalkkatietoService
 {
-    readonly PalkkaDbContext palkkaDbContext;
+    readonly PalkkaDbContext dbContext;
 
     public PalkkatietoService(PalkkaDbContext context) 
     {
-        this.palkkaDbContext = context;
+        this.dbContext = context;
     }
 
     public async Task<Palkka> Add(Palkka palkka, CancellationToken cancellationToken)
     {
-        await palkkaDbContext.AddAsync(palkka, cancellationToken);
-        await palkkaDbContext.SaveChangesAsync(cancellationToken);
-        Debug.Assert(palkka.Id != 0);
+        await dbContext.AddAsync(palkka, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return palkka;
     }
 
     public async Task<Palkka?> GetById(long id)
     {
-        var ret = await palkkaDbContext.Palkat.FindAsync(id);
+        var ret = await dbContext.Palkat.FindAsync(id);
         return ret;
     }
 
     public async Task<IList<Palkka>> GetByQuery(PalkkaQuery query, CancellationToken cancellationToken)
     {
-        var palkatQuery = palkkaDbContext.Palkat.AsNoTracking();
+        var palkatQuery = dbContext.Palkat.AsNoTracking();
         if (query.UserId != null) {
             palkatQuery = palkatQuery.Where(p => p.User.Id == query.UserId);
         }
@@ -76,8 +74,8 @@ public class PalkkatietoService : IPalkkatietoService
     {
         var entity = await GetById(id);
         if (entity == null) throw new Exception($"{id} not found in palkka db for removal.");
-        palkkaDbContext.Remove(entity);
-        await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        dbContext.Entry(entity).State = EntityState.Deleted;
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Palkka> Update(Palkka palkka, CancellationToken cancellationToken) 
@@ -87,7 +85,7 @@ public class PalkkatietoService : IPalkkatietoService
             throw new Exception($"Update: entity {palkka.Id} not found");
         }
         MapData(palkka, dbEntity);
-        await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return dbEntity;
     }
 

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using palkkatietoapi.Model;
 
 namespace palkkatietoapi.Db;
@@ -7,8 +6,9 @@ namespace palkkatietoapi.Db;
 public sealed class PalkkaDbContext : DbContext
 {
     public PalkkaDbContext(DbContextOptions<PalkkaDbContext> options) : base(options) 
-    {        
+    {
     }
-    public DbSet<User>? Users { get; set; }
-    public DbSet<Palkka>? Palkat { get; set; }
+
+    public DbSet<User> Users { get; set; }
+    public DbSet<Palkka> Palkat { get; set; }
 }

@@ -1,30 +1,30 @@
-
 using palkkatietoapi.Model;
 using palkkatietoapi.Db;
-
+using Microsoft.EntityFrameworkCore;
 namespace palkkatietoapi.Services;
 
 public class UserService : IUserService
 {
     readonly ILogger<UserService> logger;
 
-    readonly PalkkaDbContext palkkaDbContext;
+    readonly PalkkaDbContext dbContext;
 
-    public UserService(ILogger<UserService> logger, PalkkaDbContext palkkaDbContext) 
+    public UserService(ILogger<UserService> logger, PalkkaDbContext dbContext) 
     {
         this.logger = logger;
-        this.palkkaDbContext = palkkaDbContext;
+        this.dbContext = dbContext;
     }
 
-    public async Task Add(User user, CancellationToken cancellationToken)
+    public async Task<User> Add(User user, CancellationToken cancellationToken)
     {
-        palkkaDbContext.Add(user);
-        await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.AddAsync(user);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return user;
     }
 
     public async Task<User?> GetById(long id, CancellationToken cancellationToken)
     {
-        var entity = await palkkaDbContext.FindAsync<User>(id);
+        var entity = await dbContext.FindAsync<User>(id);
         return entity;
         
     }
@@ -35,12 +35,12 @@ public class UserService : IUserService
         if (entity == null) {
             logger.LogError("GetById: Cannot find user {Id}", id);
             throw new Exception($"Cannot find user {id}.");
-        } 
-        palkkaDbContext.Remove<User>(entity);
-        await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        }
+        dbContext.Entry(entity).State = EntityState.Deleted;
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Update(User user, CancellationToken cancellationToken)
+    public async Task<User> Update(User user, CancellationToken cancellationToken)
     {
         var dbEntity = await GetById(user.Id, cancellationToken);
         if (dbEntity == null) {
@@ -48,7 +48,8 @@ public class UserService : IUserService
             throw new Exception($"Update: entity {user.Id} not found");
         }
         MapUserData(user, dbEntity);
-        await palkkaDbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return dbEntity;
     }
 
     private void MapUserData(User from, User to) 
