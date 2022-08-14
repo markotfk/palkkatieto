@@ -47,8 +47,8 @@ public class UsersController : ControllerBase
     [Route("update")]
     public async Task<IActionResult> Update(User user, CancellationToken cancellationToken)
     {
-        var user = await userService.Update(user, cancellationToken);
-        return Ok(user);
+        var ret = await userService.Update(user, cancellationToken);
+        return Ok(ret);
     }
 
 }
