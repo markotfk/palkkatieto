@@ -64,4 +64,24 @@ public class UserControllerTests : UnitTestBase
         Assert.AreEqual("Unit Test", getByIdUser.Name);
         Assert.AreEqual(lastLoginDate, getByIdUser.LastLogin);
     }
+
+    [Test]
+    public async Task TestRemoveUser() 
+    {
+        var user = CreateUser(nameof(UserControllerTests), "Unit Test");
+        var lastLoginDate = DateTime.UtcNow;
+        user.LastLogin = lastLoginDate;
+        var addResult = await instance.Add(user, CancellationToken.None) as OkObjectResult;
+        Assert.NotNull(addResult);
+        var addedUser = (User)addResult.Value;
+        Assert.IsTrue(addedUser.Id != 0);
+
+        // Remove newly added user
+        var removeResult = await instance.Remove(addedUser.Id, CancellationToken.None) as OkObjectResult;
+        Assert.NotNull(removeResult);
+
+        // Test that the user is not found any more
+        var getByIdResult = await instance.GetById(addedUser.Id, CancellationToken.None) as NotFoundResult;
+        Assert.NotNull(getByIdResult);
+    }
 }
