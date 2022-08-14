@@ -6,7 +6,7 @@ Anonyymin palkkatiedon kirjaus ja raportointi.
 Toteutustekniikka 
 
 Backend:
-ASP.NET 6, SQL palvelin (Postgresql).
+ASP.NET 7, Postgres database
 
 Frontend:
 Bootstrap, JQuery
