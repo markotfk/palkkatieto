@@ -84,4 +84,24 @@ public class UserControllerTests : UnitTestBase
         var getByIdResult = await instance.GetById(addedUser.Id, CancellationToken.None) as NotFoundResult;
         Assert.NotNull(getByIdResult);
     }
+
+    [Test]
+    public async Task TestUpdateUser() 
+    {
+        var user = CreateUser(nameof(UserControllerTests), "Unit Test");
+        var lastLoginDate = DateTime.UtcNow;
+        user.LastLogin = lastLoginDate;
+        var addResult = await instance.Add(user, CancellationToken.None) as OkObjectResult;
+        Assert.NotNull(addResult);
+        var addedUser = (User)addResult.Value;
+        
+        const string newName = "Matti Meikäläinen";
+        addedUser.Name = newName;
+
+        var updateResult = await instance.Update(addedUser, CancellationToken.None) as OkObjectResult;
+        Assert.NotNull(updateResult);
+        var updatedUser = (User)updateResult.Value;
+        Assert.AreEqual(addedUser.Id, updatedUser.Id);
+        Assert.AreEqual(newName, updatedUser.Name);
+    }
 }

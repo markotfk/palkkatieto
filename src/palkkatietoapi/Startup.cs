@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace palkkatietoapi;
 public class Startup
@@ -20,7 +21,8 @@ public class Startup
         });
     }
 
-    public void ConfigureAndRun(WebApplication app, IWebHostEnvironment env)
+
+    public async Task ConfigureAndRun(WebApplication app, IWebHostEnvironment env)
     {
         if (app.Environment.IsDevelopment())
         {
@@ -33,10 +35,13 @@ public class Startup
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+        
+        app.UseSerilogRequestLogging();
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
         
-        app.Run();
+        await app.RunAsync();
     }
 }

@@ -12,11 +12,23 @@ public abstract class UnitTestBase
     {
         db = UnitTestPalkkaDbContextCreator.Instance();
         await db.Database.MigrateAsync();
-        await db.Database.ExecuteSqlRawAsync("DELETE FROM \"Palkat\"");
-        await db.Database.ExecuteSqlRawAsync("DELETE FROM \"Users\"");
+
+        await EmptyTables();
 
         await db.Users.AddAsync(CreateUser(userLogin, userName));
         await db.SaveChangesAsync();
+    }
+
+    protected async Task EmptyTables() 
+    {
+        var txn = await db.Database.BeginTransactionAsync();
+        try {
+            await db.Database.ExecuteSqlRawAsync("TRUNCATE \"Palkat\", \"Users\" RESTART IDENTITY");
+        } catch {
+            await txn.RollbackAsync();
+            throw;
+        }
+        await txn.CommitAsync();
     }
 
     protected User CreateUser(string login, string name) {
