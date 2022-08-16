@@ -4,6 +4,7 @@ using palkkatietoapi.Model;
 using NUnit.Framework;
 using NSubstitute;
 using palkkatietoapi.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace palkkatietoapi.Tests;
 
@@ -103,5 +104,19 @@ public class UserControllerTests : UnitTestBase
         var updatedUser = (User)updateResult.Value;
         Assert.AreEqual(addedUser.Id, updatedUser.Id);
         Assert.AreEqual(newName, updatedUser.Name);
+    }
+
+    [Test]
+    public async Task TestAddUserNullLogin()
+    {
+        var user = CreateUser(null, "name");
+        Assert.ThrowsAsync<DbUpdateException>(async () => await instance.Add(user, CancellationToken.None), "Add with null login should throw DbUpdateException");
+    }
+
+    [Test]
+    public async Task TestAddUserNullName()
+    {
+        var user = CreateUser("login", null);
+        Assert.ThrowsAsync<DbUpdateException>(async () => await instance.Add(user, CancellationToken.None), "Add with null name should throw DbUpdateException");
     }
 }

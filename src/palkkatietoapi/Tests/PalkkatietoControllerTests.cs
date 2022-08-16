@@ -1,4 +1,3 @@
-
 namespace palkkatietoapi.Tests;
 
 using palkkatietoapi.Controllers;
@@ -6,6 +5,7 @@ using palkkatietoapi.Model;
 using NUnit.Framework;
 using NSubstitute;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 public class PalkkatietoControllerTests : UnitTestBase
 {
@@ -172,5 +172,29 @@ public class PalkkatietoControllerTests : UnitTestBase
         Assert.AreEqual("R-collection", resultValue[0].Company);
     }
 
+    [Test]
+    public async Task TestAddPalkkaCompanyNull()
+    {
+        var palkka = CreatePalkka(222,"city",null,"jobrole");
+
+        Assert.ThrowsAsync<DbUpdateException>(async () => await instance.AddPalkka(palkka, CancellationToken.None), "Add with null company should throw DbUpdateException");
+    }
+
+    [Test]
+    public async Task TestAddPalkkaCityNull()
+    {
+        var palkka = CreatePalkka(232, null, "company", "jobrole");
+        Assert.ThrowsAsync<DbUpdateException>(async () => await instance.AddPalkka(palkka, CancellationToken.None), "Add with null city should throw DbUpdateException");
+    }
+
+    [Test]
+    public async Task TestGetByIdNotFound()
+    {
+        var palkka = CreatePalkka(2000, "city", "company", "role");
+        await instance.AddPalkka(palkka, CancellationToken.None);
+
+        var getByIdResult = await instance.GetById(-1) as NotFoundResult;
+        Assert.IsNotNull(getByIdResult);
+    }
     
 }
