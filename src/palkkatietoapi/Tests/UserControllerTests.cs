@@ -14,20 +14,12 @@ public class UserControllerTests : UnitTestBase
     private const string userLogin = nameof(PalkkatietoControllerTests);
     private const string userName = "Test UsersController";
     
-    [SetUp]
-    public async Task Setup() 
+    protected override void Setup() 
     {
-        await BaseSetup(userLogin, userName);
         var mockLoggerService = Substitute.For<ILogger<UserService>>();
         IUserService service = new UserService(mockLoggerService, db);
         var mockLoggerController = Substitute.For<ILogger<UsersController>>();
         instance = new UsersController(mockLoggerController, service);
-    }
-
-    [TearDown]
-    public void Teardown()
-    {
-        db.Dispose();
     }
 
     [Test]
@@ -107,16 +99,26 @@ public class UserControllerTests : UnitTestBase
     }
 
     [Test]
-    public async Task TestAddUserNullLogin()
+    public void TestAddUserNullLogin()
     {
         var user = CreateUser(null, "name");
         Assert.ThrowsAsync<DbUpdateException>(async () => await instance.Add(user, CancellationToken.None), "Add with null login should throw DbUpdateException");
     }
 
     [Test]
-    public async Task TestAddUserNullName()
+    public void TestAddUserNullName()
     {
         var user = CreateUser("login", null);
         Assert.ThrowsAsync<DbUpdateException>(async () => await instance.Add(user, CancellationToken.None), "Add with null name should throw DbUpdateException");
+    }
+
+    [Test]
+    public async Task TestGetByIdNotFound()
+    {
+        var user = CreateUser("login", "name");
+        await instance.Add(user, CancellationToken.None);
+
+        var getByIdResult = await instance.GetById(-1, CancellationToken.None) as NotFoundResult;
+        Assert.IsNotNull(getByIdResult);
     }
 }

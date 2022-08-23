@@ -13,18 +13,10 @@ public class PalkkatietoControllerTests : UnitTestBase
     private const string userLogin = nameof(PalkkatietoControllerTests);
     private const string userName = "Test PalkkatietoController";
 
-    [SetUp]
-    public async Task Setup() {
-        await BaseSetup(userLogin, userName);
+    protected override void Setup() {
         var mockLogger = Substitute.For<ILogger<PalkkatietoController>>();
         IPalkkatietoService unitTestPalkkaService = new PalkkatietoService(db);
         instance = new PalkkatietoController(mockLogger, unitTestPalkkaService);
-    }
-
-    [TearDown]
-    public void Teardown() 
-    {
-        db?.Dispose();
     }
 
     [Test]
@@ -173,7 +165,7 @@ public class PalkkatietoControllerTests : UnitTestBase
     }
 
     [Test]
-    public async Task TestAddPalkkaCompanyNull()
+    public void TestAddPalkkaCompanyNull()
     {
         var palkka = CreatePalkka(222,"city",null,"jobrole");
 
@@ -181,7 +173,7 @@ public class PalkkatietoControllerTests : UnitTestBase
     }
 
     [Test]
-    public async Task TestAddPalkkaCityNull()
+    public void TestAddPalkkaCityNull()
     {
         var palkka = CreatePalkka(232, null, "company", "jobrole");
         Assert.ThrowsAsync<DbUpdateException>(async () => await instance.AddPalkka(palkka, CancellationToken.None), "Add with null city should throw DbUpdateException");

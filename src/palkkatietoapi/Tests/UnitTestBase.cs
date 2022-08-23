@@ -1,23 +1,34 @@
 using palkkatietoapi.Db;
 using palkkatietoapi.Model;
 using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
+
 namespace palkkatietoapi.Tests;
 
 public abstract class UnitTestBase 
 {
     protected PalkkaDbContext db;
 
-    
-    protected async Task BaseSetup(string userLogin, string userName)
+    [SetUp]
+    protected async Task BaseSetup()
     {
         db = UnitTestPalkkaDbContextCreator.Instance();
         await db.Database.MigrateAsync();
-
         await EmptyTables();
-
-        await db.Users.AddAsync(CreateUser(userLogin, userName));
+        await db.Users.AddAsync(CreateUser("login", "username"));
         await db.SaveChangesAsync();
+        Setup();
     }
+
+    [TearDown]
+    protected async Task BaseTeardown() {
+        await db.DisposeAsync();
+        Teardown();
+    }
+
+    protected virtual void Setup() {}
+
+    protected virtual void Teardown() {}
 
     protected async Task EmptyTables() 
     {
