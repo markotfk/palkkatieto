@@ -7,6 +7,6 @@ public class PalkkaQuery {
     public string? JobRole { get; set; }
     public string? City { get; set; }
     public string? CountryCode { get; set; }
-    public string OrderBy { get; set;}
+    public string? OrderByField { get; set;}
     public bool OrderByDescending { get; set;}
 }

@@ -48,20 +48,20 @@ public class PalkkatietoService : IPalkkatietoService
         if (!string.IsNullOrWhiteSpace(query.City)) {
             palkatQuery = palkatQuery.Where(p => p.City == query.City);
         }
-        if (!string.IsNullOrWhiteSpace(query.OrderBy)) {
-            if (query.OrderBy == nameof(Palkka.Amount)) {
+        if (!string.IsNullOrWhiteSpace(query.OrderByField)) {
+            if (query.OrderByField == nameof(Palkka.Amount)) {
                 palkatQuery = query.OrderByDescending ? 
                     palkatQuery.OrderByDescending(p => p.Amount): palkatQuery.OrderBy(p => p.Amount);
-            } else if (query.OrderBy == nameof(Palkka.City)) {
+            } else if (query.OrderByField == nameof(Palkka.City)) {
                 palkatQuery = query.OrderByDescending ? 
                     palkatQuery.OrderByDescending(p => p.City): palkatQuery.OrderBy(p => p.City);
-            } else if (query.OrderBy == nameof(Palkka.Company)) {
+            } else if (query.OrderByField == nameof(Palkka.Company)) {
                 palkatQuery = query.OrderByDescending ? 
                     palkatQuery.OrderByDescending(p => p.Company): palkatQuery.OrderBy(p => p.Company);
-            } else if (query.OrderBy == nameof(Palkka.CountryCode)) {
+            } else if (query.OrderByField == nameof(Palkka.CountryCode)) {
                 palkatQuery = query.OrderByDescending ? 
                     palkatQuery.OrderByDescending(p => p.CountryCode): palkatQuery.OrderBy(p => p.CountryCode);
-            } else if (query.OrderBy == nameof(Palkka.JobRole)) {
+            } else if (query.OrderByField == nameof(Palkka.JobRole)) {
                 palkatQuery = query.OrderByDescending ? 
                     palkatQuery.OrderByDescending(p => p.JobRole): palkatQuery.OrderBy(p => p.JobRole);
             }

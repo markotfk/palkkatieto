@@ -124,7 +124,7 @@ public class PalkkatietoControllerTests : UnitTestBase
         
         // Order results by city
         var palkkaQuery = new PalkkaQuery {
-            OrderBy = nameof(Palkka.City)
+            OrderByField = nameof(Palkka.City)
         };
         var t = await instance.GetByQuery(palkkaQuery, CancellationToken.None);
         var result = t as OkObjectResult;
@@ -150,7 +150,7 @@ public class PalkkatietoControllerTests : UnitTestBase
 
         // Test descending ordering
         var palkkaQuery = new PalkkaQuery {
-            OrderBy = nameof(Palkka.City)
+            OrderByField = nameof(Palkka.City)
         };
         palkkaQuery.OrderByDescending = true;
         var orderByDescResult = await instance.GetByQuery(palkkaQuery, CancellationToken.None) as OkObjectResult;
