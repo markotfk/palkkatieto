@@ -31,7 +31,10 @@ public class PalkkatietoController : ControllerBase
     public async Task<IActionResult> GetById(long id)
     {
         var ret = await palkkatietoService.GetById(id);
-        if (ret == null) return NotFound();
+        if (ret == null) {
+            logger.LogError($"Palkka with id {id} not found.");
+            return NotFound();
+        } 
         return Ok(ret);
     }
 

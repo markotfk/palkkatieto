@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace palkkatietoapi.Db;
 
-public class BloggingContextFactory : IDesignTimeDbContextFactory<PalkkaDbContext>
+public class PalkkaContextFactory : IDesignTimeDbContextFactory<PalkkaDbContext>
 {
     public PalkkaDbContext CreateDbContext(string[] args)
     {
