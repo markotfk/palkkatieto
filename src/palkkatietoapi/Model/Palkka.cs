@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 namespace palkkatietoapi.Model;
 
 public class Palkka {
@@ -7,6 +8,9 @@ public class Palkka {
     }
 
     public long Id { get; set; }
+
+    [Timestamp]
+    public byte[] Timestamp { get; set; }
 
     public User User { get; set; }
 
