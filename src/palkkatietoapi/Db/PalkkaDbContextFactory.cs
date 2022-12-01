@@ -12,9 +12,15 @@ public class PalkkaContextFactory : IDesignTimeDbContextFactory<PalkkaDbContext>
         }
         var command = (string)args[0];
         if (command =="ConnectionString") {
-            var optionsBuilder = new DbContextOptionsBuilder<PalkkaDbContext>();
-            optionsBuilder.UseNpgsql(args[1]);
-            return new PalkkaDbContext(optionsBuilder.Options);
+            if (!string.IsNullOrWhiteSpace(args[1])) {
+                var optionsBuilder = new DbContextOptionsBuilder<PalkkaDbContext>();
+                optionsBuilder.UseNpgsql(args[1]);
+#if DEBUG 
+                optionsBuilder.EnableDetailedErrors(true);
+#endif
+                return new PalkkaDbContext(optionsBuilder.Options);
+            }
+            
         }
         throw new Exception("ConnectionString must be provided");
     }
